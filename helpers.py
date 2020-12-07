@@ -37,8 +37,8 @@ class lazy_cartesian_product:
         return combination
 
 def plot_models(dfs, model_type, n_components, title=[''], rows=1, cols=1, save_name='zmagovalni'):
-    fig = plt.figure(figsize=(8 * rows, 8 * cols))
-    gs = gridspec.GridSpec(cols, rows)
+    fig = plt.figure(figsize=(8 * cols, 8 * rows))
+    gs = gridspec.GridSpec(rows, cols)
 
     i=0
     for df in dfs:
@@ -55,7 +55,7 @@ def plot_models(dfs, model_type, n_components, title=[''], rows=1, cols=1, save_
     for ax in ax_list:
         handles, labels = ax.get_legend_handles_labels()
         by_label = OrderedDict(zip(labels, handles))
-        ax.legend(by_label.values(), by_label.keys(), loc='upper left')
+        ax.legend(by_label.values(), by_label.keys(), loc='upper left',fontsize='large')
 
     fig.tight_layout()
     fig.savefig(r'results\/' + save_name + '.pdf')
@@ -63,8 +63,8 @@ def plot_models(dfs, model_type, n_components, title=[''], rows=1, cols=1, save_
 
 
 def plot_CIs(dfs, model_type, n_components, title=[''], rows=1, cols=1, save_name='intervali',repetitions=30):
-    fig = plt.figure(figsize=(8 * rows, 8 * cols))
-    gs = gridspec.GridSpec(cols, rows)
+    fig = plt.figure(figsize=(8 * cols, 8 * rows))
+    gs = gridspec.GridSpec(rows, cols)
 
     i = 0
     for df in dfs:
@@ -75,7 +75,7 @@ def plot_CIs(dfs, model_type, n_components, title=[''], rows=1, cols=1, save_nam
 
     ax_list = fig.axes
     for ax in ax_list:
-        ax.legend(loc='upper left')
+        ax.legend(loc='upper left',fontsize='large')
 
     fig.tight_layout()
     fig.savefig(r'results\/' + save_name + '.pdf')
@@ -95,7 +95,7 @@ def criterium_value(criterium):
 
 
 def plot_raw_data(file_names,title,ylabel,hour_intervals,cols=1,rows=2,save_name='izvorni'):
-    fig = plt.figure(figsize=(8*cols, 8*rows))
+    fig = plt.figure(figsize=(8 * cols, 8 * rows))
     gs = gridspec.GridSpec(rows, cols)
 
     ix=0
@@ -145,8 +145,7 @@ def get_slo_model_name(model_type):
         "nb": "Negativen binomski model",
         "gen_poisson": "Generaliziran Poissonov model",
         "zero_nb": "Negativen binomski model z inflacijo ničel",
-        "zero_poisson": "Poissonov model z inflacijo ničel",
-        "hurdle": "Hurdlov model"
+        "zero_poisson": "Poissonov model z inflacijo ničel"
     })
     return names[model_type]
 

@@ -32,7 +32,7 @@ def find_best_model(df, models_type, n_components, save_file_to='model'):
             # plot
             ax = fig.add_subplot(gs[i])
             title = hlp.get_slo_model_name(model_type)
-            subplot_model(df['X'], df['Y'], X_test, Y_test, ax, color=colors[c], title=title,label='št. komponent: ' + str(n_component))
+            subplot_model(df['X'], df['Y'], X_test, Y_test, ax, color=colors[c], title=title,label='N=' + str(n_component))
 
             df_results = df_results.append(stats, ignore_index=True)
             c = c + 1
@@ -44,7 +44,7 @@ def find_best_model(df, models_type, n_components, save_file_to='model'):
     for ax in ax_list:
         handles, labels = ax.get_legend_handles_labels()
         by_label = OrderedDict(zip(labels, handles))
-        ax.legend(by_label.values(), by_label.keys(), loc='upper left',fontsize='small')
+        ax.legend(by_label.values(), by_label.keys(), loc='upper left',fontsize='medium')
 
     fig.tight_layout()
     fig.savefig(r'results\/' + save_file_to + '.pdf')
@@ -249,6 +249,9 @@ def subplot_model(X, Y, X_test, Y_test, ax, plot_measurements_with_color=False, 
 
 
 def find_alpha(df, n_components):
+    # finding right alpha - OLS regression
+    # https://towardsdatascience.com/negative-binomial-regression-f99031bb25b4
+
     # Poisson regression
     X_fit, _, X_fit_test, _ = cosinor(df['X'], n_components=n_components, period=24)
     X_fit = sm.add_constant(X_fit, has_constant='add')
@@ -428,8 +431,8 @@ def compare_by_component(df, component, n_components, model_type, ax_indices, ax
         names = component
     else:
         names = df[component].unique()
-    fig = plt.figure(figsize=(8 * rows, 8 * cols))
-    gs = gridspec.GridSpec(cols, rows)
+    fig = plt.figure(figsize=(8 * cols, 8 * rows))
+    gs = gridspec.GridSpec(rows, cols)
 
     i = 0
     for name in names:
@@ -457,7 +460,7 @@ def compare_by_component(df, component, n_components, model_type, ax_indices, ax
         ax.set_title(ax_titles[i])
         handles, labels = ax.get_legend_handles_labels()
         by_label = OrderedDict(zip(labels, handles))
-        ax.legend(by_label.values(), by_label.keys(), loc='upper left')
+        ax.legend(by_label.values(), by_label.keys(), loc='upper left',fontsize='large')
 
         i=i+1
 

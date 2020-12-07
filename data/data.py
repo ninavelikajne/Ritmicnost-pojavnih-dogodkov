@@ -3,6 +3,7 @@ import pymongo
 import pandas as pd
 import numpy as np
 import calendar
+from data.weather import get_weather
 
 
 
@@ -46,8 +47,7 @@ def get_hour_db(row):
 
 def get_from_db():
     # connect to db
-    client = pymongo.MongoClient(
-        "INSERT MONGODB CONNECTION LINK")
+    client = pymongo.MongoClient("INSERT MONGODB CONNECTION LINK")
 
     # get all data
     db = client["DB"]
@@ -63,7 +63,7 @@ def get_from_db():
     df['X'] = df.apply(lambda row: get_hour_db(row), axis=1)
 
     # get weather
-    # get_weather(df,"2020")
+    get_weather(df,"2020")
     weather = pd.read_csv(r'weather2020.csv')
     weather = weather[['Date time', 'Temperature', 'Relative Humidity', 'Cloud Cover', 'Conditions']]
     weather.columns = ['Date time', 'temperature', 'humidity', 'cloud_cover', 'conditions']
@@ -134,7 +134,7 @@ def get_from_disk():
 
         df['Y'] = df.apply(lambda row: format_count(row), axis=1)
 
-        # get_weather(df,file)
+        get_weather(df,file)
         if "2019" in file:
             weather = pd.read_csv(r'weather2019.csv')
         else:

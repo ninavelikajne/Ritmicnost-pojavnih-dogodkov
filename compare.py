@@ -14,7 +14,7 @@ def compare_by_day(df, n_components, model_type):
         "Sunday": "nedelja"
     })
 
-    dproc.compare_by_component(df, 'day', n_components, model_type, [0, 0, 0, 0, 1, 1, 0], ['delovnik', 'vikend'], [False, False, False, True, True, True, False], rows=1, cols=2,
+    dproc.compare_by_component(df, 'day', n_components, model_type, [0, 0, 0, 0, 1, 1, 0], ['delovnik', 'vikend'], [False, False, False, True, True, True, False], rows=2, cols=1,
                                labels=slo_names,save_name='dnevi')
 
 
@@ -34,7 +34,7 @@ def compare_by_type(df,n_components,model_type):
 
     })
 
-    dproc.compare_by_component(df,['personal', 'bus', 'freight'], n_components, model_type,[0,1,0],['osebna, tovorna vozila','avtobusi'],[True,True,True],labels=slo_names,save_name='tipi_vozil',rows=1, cols=2,multiple_cols=True)
+    dproc.compare_by_component(df,['personal', 'bus', 'freight'], n_components, model_type,[0,1,0],['osebna, tovorna vozila','avtobusi'],[True,True,True],labels=slo_names,save_name='tipi_vozil',rows=2, cols=1,multiple_cols=True)
 
 def compare_by_weather(df,n_components,model_type):
     slo_names = dict({
@@ -73,7 +73,7 @@ def compare_by_covid(n_components,model_type):
     df_3=hlp.clean_data(november_2019)
     df_4=hlp.clean_data(november_2020)
     df_together = pd.concat([df_1, df_2, df_3, df_4])
-    dproc.compare_by_component(df_together, 'year', n_components, model_type,[0,0,1,1],['april','november'],[True,True,True,True],rows=2, cols=1,save_name='covid')
+    dproc.compare_by_component(df_together, 'year', n_components, model_type,[0,0,1,1],['april','november'],[True,True,True,True],rows=1, cols=2,save_name='covid')
 
     # ONLY WEEKENDS
     df_1 = april_2019[april_2019['weekend'].str.contains('weekend')]
@@ -85,7 +85,7 @@ def compare_by_covid(n_components,model_type):
     df_3 = hlp.clean_data(df_3)
     df_4 = hlp.clean_data(df_4)
     df_together = pd.concat([df_1, df_2, df_3, df_4])
-    dproc.compare_by_component(df_together, 'year', n_components, model_type,[0,0,1,1],['vikendi - april','vikendi - november'],[True,True,True,True],rows=2, cols=1,save_name='covid_vikend')
+    dproc.compare_by_component(df_together, 'year', n_components, model_type,[0,0,1,1],['vikendi - april','vikendi - november'],[True,True,True,True],rows=1, cols=2,save_name='covid_vikend')
 
 
     # ONLY WORK DAYS
@@ -99,5 +99,5 @@ def compare_by_covid(n_components,model_type):
     df_4 = hlp.clean_data(df_4)
     df_together = pd.concat([df_1, df_2, df_3, df_4])
     dproc.compare_by_component(df_together, 'year', n_components, model_type, [0, 0, 1, 1],
-                               ['delovnik - april', 'delovnik - november'], [True, True, True, True], rows=2, cols=1,
+                               ['delovnik - april', 'delovnik - november'], [True, True, True, True], rows=1, cols=2,
                                save_name='covid_delovnik')

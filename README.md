@@ -8,7 +8,7 @@ Vsebuje funkcije, za pripravo podatkov na klic metode compare_by_component() iz 
 Glavni datoteki, vsebujeta funkcije za izgranjo, primerjavo modelov in iskanje najbolj ustreznega modela.
 
 #### cron-job
-Mapa cron-job vsebuje datoteke in kodo, ki se izvede kot cron opravilo. Kliče se vsako uro in preko API-ja pridobi prometne podatke. Podatki se shranijo v MongoDB bazo.
+Mapa cron-job vsebuje datoteke in kodo, ki se izvede kot cron opravilo. Kliče se vsako uro in preko API-ja pridobi prometne podatke. Podatki se shranijo v MongoDB bazo. Skripto zaženemo z ukazom: python cron_script.py
 
 #### data
 V mapi data so shranjeni podatki v .csv obliki. Podatkovni zbirki južne ljubljanske obvoznice in Šmartinske ceste nista javno objavljeni v repozitoriju. Poleg podatkov, se nahaja tudi datoteka data.py in weather.py. Data.py uredi prometne podatke do ustrezne oblike. Weather.py pa vsebuje klic API-ja in pridobitev zgodovinskih vremenskih podatkov. 

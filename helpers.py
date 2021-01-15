@@ -1,12 +1,6 @@
-import matplotlib.pyplot as plt
-from matplotlib import gridspec
-import pandas as pd
-import data_processing as dproc
-from collections import OrderedDict
-import matplotlib.dates as mdates
 import numpy as np
-import matplotlib.dates as md
 import math
+
 
 class lazy_cartesian_product:
     def __init__(self, sets):
@@ -36,50 +30,98 @@ class lazy_cartesian_product:
             combination.append(self.sets[i][int(math.floor(n / self.divs[i])) % self.mods[i]])
         return combination
 
-def plot_models(dfs, model_type, n_components, title=[''], rows=1, cols=1, save_name='zmagovalni'):
-    fig = plt.figure(figsize=(8 * cols, 8 * rows))
-    gs = gridspec.GridSpec(rows, cols)
 
-    i=0
-    for df in dfs:
-        results, stats, X_test, Y_test = dproc.fit_to_model(df, n_components[i], model_type[i])
-
-        # plot
-        ax = fig.add_subplot(gs[i])
-        dproc.subplot_model(df['X'], df['Y'], X_test, Y_test, ax, color='blue', title=title[i],
-                            label='prilagojena krivulja')
-
-        i=i+1
-
-    ax_list = fig.axes
-    for ax in ax_list:
-        handles, labels = ax.get_legend_handles_labels()
-        by_label = OrderedDict(zip(labels, handles))
-        ax.legend(by_label.values(), by_label.keys(), loc='upper left',fontsize='large')
-
-    fig.tight_layout()
-    fig.savefig(r'results\/' + save_name + '.pdf')
-    plt.show()
-
-
-def plot_CIs(dfs, model_type, n_components, title=[''], rows=1, cols=1, save_name='intervali',repetitions=30):
-    fig = plt.figure(figsize=(8 * cols, 8 * rows))
-    gs = gridspec.GridSpec(rows, cols)
-
+def add_to_table(table, new_table, row_ix):
     i = 0
-    for df in dfs:
-        ax = fig.add_subplot(gs[i])
-        dproc.confidential_intervals_of_model(df, n_components[i], model_type[i], ax, title[i],repetitions=repetitions)
+    for new in new_table:
+        table[row_ix][i] = new
+        i = i + 1
 
-        i=i+1
+    return table
 
-    ax_list = fig.axes
-    for ax in ax_list:
-        ax.legend(loc='upper left',fontsize='large')
 
-    fig.tight_layout()
-    fig.savefig(r'results\/' + save_name + '.pdf')
-    plt.show()
+def get_factors(n):
+    grid = dict({
+        1: (1, 1),
+        2: (2, 1),
+        3: (2, 2),
+        4: (2, 2),
+        5: (3, 2)
+    })
+
+    return grid[n]
+
+
+def calculate_mean_std(table_peaks, table_heights, peaks, precision_rate):
+    max_peaks = len(peaks)
+    repetitions = len(table_peaks)
+    period = len(table_peaks[0])
+
+    values_peaks = np.empty((max_peaks, repetitions))
+    values_peaks[:] = np.nan
+    mean_N_std_p = np.empty((3, (max_peaks)))
+    mean_N_std_p[:] = np.nan
+
+    values_heights = np.empty((max_peaks, repetitions))
+    values_heights[:] = np.nan
+    mean_N_std_h = np.empty((3, (max_peaks)))
+    mean_N_std_h[:] = np.nan
+
+    ix = 0
+    for peak in peaks:
+        N = 0
+        mean_p = 0
+        mean_h = 0
+        k = 0
+        for i in range(period):
+            for j in range(repetitions):
+                value_p = table_peaks[j][i]
+                value_h = table_heights[j][i]
+                if not np.isnan(value_p):
+                    if math.isclose(value_p, peak, abs_tol=precision_rate):
+                        N = N + 1
+                        mean_p = mean_p + value_p
+                        mean_h = mean_h + value_h
+                        values_peaks[ix][k] = value_p
+                        values_heights[ix][k] = value_h
+                        k = k + 1
+                        if k == repetitions:
+                            break
+            if k == repetitions:
+                break
+
+        if N != 0:
+            mean_N_std_p[0][ix] = mean_p / N
+            mean_N_std_p[1][ix] = N
+            mean_N_std_h[0][ix] = mean_h / N
+            mean_N_std_h[1][ix] = N
+
+            ix = ix + 1
+
+    ix = 0
+    for i in range(max_peaks):
+        sum_p = 0
+        sum_h = 0
+        if not np.isnan(mean_N_std_p[0][i]):
+            for j in range(repetitions):
+                if not np.isnan(values_peaks[i][j]):
+                    sum_p = sum_p + (values_peaks[i][j] - mean_N_std_p[0][i]) ** 2
+                    sum_h = sum_h + (values_heights[i][j] - mean_N_std_h[0][i]) ** 2
+            mean_N_std_p[2][i] = math.sqrt((1 / mean_N_std_p[1][i]) * sum_p)
+            mean_N_std_h[2][i] = math.sqrt((1 / mean_N_std_h[1][i]) * sum_h)
+
+            if ix == 0:
+                mean_std_p = np.array(np.array([mean_N_std_p[0][i], mean_N_std_p[2][i]]))
+                mean_std_h = np.array(np.array([mean_N_std_h[0][i], mean_N_std_h[2][i]]))
+            else:
+                mean_std_p = np.row_stack((mean_std_p, np.array([mean_N_std_p[0][i], mean_N_std_p[2][i]])))
+                mean_std_h = np.row_stack((mean_std_h, np.array([mean_N_std_h[0][i], mean_N_std_h[2][i]])))
+            ix = ix + 1
+
+    if ix == 0:
+        return [], []
+    else:
+        return mean_std_p, mean_std_h
 
 
 def criterium_value(criterium):
@@ -92,51 +134,6 @@ def criterium_value(criterium):
     })
 
     return values[criterium]
-
-
-def plot_raw_data(file_names,title,ylabel,hour_intervals,cols=1,rows=2,save_name='izvorni'):
-    fig = plt.figure(figsize=(8 * cols, 8 * rows))
-    gs = gridspec.GridSpec(rows, cols)
-
-    ix=0
-    for file_name in file_names:
-        df = pd.read_csv(r'.\/data\/' + file_name + ".csv")
-        df = clean_data(df)
-
-        var = df[['Y']].to_numpy().var()
-        mean = df[['Y']].to_numpy().mean()
-        print(file_name, ": Var: ", var, " Mean: ", mean)
-
-        ax = fig.add_subplot(gs[ix])
-        ax.scatter(df.date.head(500), df.Y.head(500), c='blue', s=1)
-
-        date_form = md.DateFormatter("%d-%m %H:00")
-        ax.xaxis.set_major_formatter(date_form)
-        ax.xaxis.set_major_locator(mdates.HourLocator(interval=hour_intervals[ix]))
-        plt.xticks(rotation=45)
-        plt.xlabel('ure v dnevih [D-M H:MIN]')
-        plt.ylabel(ylabel)
-        plt.title(title[ix])
-
-        ix=ix+1
-
-    fig.tight_layout()
-    fig.savefig(r'results\/' + save_name + '.pdf')
-    plt.show()
-
-
-def clean_data(df):
-    df = df.dropna(subset=['X', 'Y'])
-
-    for hour in range(0, 24, 1):
-        df_hour = df.loc[df.X == hour].copy()
-        # cleaning outliers
-        df_hour = df_hour.loc[df_hour.Y >= df_hour.Y.quantile(0.15)].copy()
-        df_hour = df_hour.loc[df_hour.Y <= df_hour.Y.quantile(0.85)].copy()
-        df.loc[df['X'] == hour, ['Y']] = df_hour['Y']
-
-    df = df.dropna(subset=['X', 'Y'])
-    return df
 
 
 def get_slo_model_name(model_type):

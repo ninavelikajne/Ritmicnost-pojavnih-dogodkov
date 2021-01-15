@@ -456,12 +456,15 @@ def compare_by_component(df, component, n_components, models_type, ax_indices, a
                                                                repetitions=repetitions, precision_rate=precision_rate)
         # plot
         ax = fig.add_subplot(gs[ax_indices[i]])
-        if name in ['Monday', 'Tuesday', 'Wednesday', 'Thursday']:
-            subplot_model(df_name['X'], df_name['Y'], X_test, Y_test, ax, raw_data_label='ostali dnevi med tednom',
+        if name in ['ponedeljek', 'torek', 'sreda', 'cetrtek']:
+            subplot_model(df_name['X'], df_name['Y'], X_test, Y_test, ax, raw_data_label='delovnik, ostali dnevi',
+                          plot_model=True, color=colors[i], label=name)
+        elif labels!=None:
+            subplot_model(df_name['X'], df_name['Y'], X_test, Y_test, ax, plot_measurements_with_color=True,
                           plot_model=True, color=colors[i], label=labels[name])
         else:
             subplot_model(df_name['X'], df_name['Y'], X_test, Y_test, ax, plot_measurements_with_color=True,
-                          plot_model=True, color=colors[i], label=labels[name])
+                          plot_model=True, color=colors[i], label=name)
 
         best = best.to_dict()
         best[main_name] = name

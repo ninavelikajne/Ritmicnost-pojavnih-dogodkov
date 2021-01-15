@@ -153,4 +153,5 @@ fabric.properties
 cron-job/.git
 data/
 main.py
+delete.py
 package-lock.json

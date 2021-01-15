@@ -49,7 +49,7 @@ def compare_by_covid():
     results = []
     for file_name in file_names:
         df = pd.read_csv(r'data\/' + file_name + '.csv')
-        df_results = dproc.compare_by_component(df, 'obdobje', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], models_type, [0, 0, 1, 1],
+        df_results = dproc.compare_by_component(df, 'obdobje', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], models_type, [0, 1, 0, 1],
                                                 ['april', 'november'], rows=1, cols=2, save_file_to=file_name + '.pdf')
         results.append(df_results)
 

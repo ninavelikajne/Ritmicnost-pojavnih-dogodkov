@@ -130,10 +130,11 @@ def find_best_model(df, models_type, n_components, plot=False, save_file_to='mod
         plt.show()
 
     # eval
-    df_best = get_best_n_components(df_results)
-    df_best = get_best_model_type(df_results, 'Vuong', n_components=df_best.n_components)
+    best_n_components = get_best_n_components(df_results).n_components
+    best_model_type = get_best_model_type(df_results, 'Vuong').model_type
+    df_best=df_results.loc[(df_results['n_components']==best_n_components) & (df_results['model_type'].str.match(best_model_type))].copy()
 
-    return df_best
+    return df_best.iloc[0]
 
 
 def cosinor(X, n_components, period=24, lin_comp=False):

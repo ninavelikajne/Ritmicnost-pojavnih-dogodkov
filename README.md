@@ -19,9 +19,7 @@ V mapo results se shranjujejo grafi in rezultati, ki se generirajo med izvajanje
 
 --------------------------------------
 
-Koda je očiščena tako, da so odstranjeni vsi API ključi in podatki. API ključe je potrebno dodati na naslednjih mestih:
-* weather.py, vrstica 12
-* data.py, vrstica 50 (potrebno urediti tudi ime baze in zbirke)
-* cron_script.py, vrstica 11 in vrstica 13 (potrebno urediti tudi ime baze in zbirke)
+Koda je očiščena tako, da so odstranjeni vsi API ključi in podatki. API ključe je potrebno dodati:
+* cron_script.py, vrstica 11 in vrstica 13 (potrebno urediti tudi ime baze in zbirke, kamor podatke shranjujemo)
 
 Analizo na podatkih lahko izvedemo tudi brez zgoraj omenjenih API ključev. API ključi so namenjeni le pridobitvi podatkov.
